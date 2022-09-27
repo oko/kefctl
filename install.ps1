@@ -57,3 +57,4 @@ Set-Location $PSScriptRoot
 & cargo.exe build --release
 
 Copy-Item "$PSScriptRoot\target\release\kefctl.exe" "$userpath"
+Copy-Item "$PSScriptRoot\target\release\kefdisc.exe" "$userpath"

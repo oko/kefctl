@@ -8,6 +8,8 @@ use std::time::Duration;
 struct Args {
     #[clap(short = 't', long = "timeout")]
     timeout: u64,
+    #[clap(short = 's', long = "serial")]
+    serial: Option<String>,
 }
 
 #[tokio::main]
@@ -15,16 +17,25 @@ async fn main() {
     env_logger::init();
     let args = Args::parse();
     match libkef::discovery::discover(Duration::from_secs(args.timeout)).await {
-        Some(speakers) => {
-            for (u, sn) in speakers.iter() {
-                println!("{}\t{}", u.host().unwrap(), sn);
+        Some(speakers) => match args.serial {
+            Some(serial) => {
+                for (u, sn) in speakers.iter() {
+                    if &serial == sn {
+                        println!("{}", u.host().unwrap());
+                    }
+                }
             }
-            info!(
-                "discovered {} speakers in {} seconds",
-                speakers.keys().len(),
-                args.timeout
-            )
-        }
+            None => {
+                for (u, sn) in speakers.iter() {
+                    println!("{}\t{}", u.host().unwrap(), sn);
+                }
+                info!(
+                    "discovered {} speakers in {} seconds",
+                    speakers.keys().len(),
+                    args.timeout
+                );
+            }
+        },
         None => {
             error!("no speakers discovered in {} seconds", args.timeout)
         }
