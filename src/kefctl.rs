@@ -90,9 +90,10 @@ async fn main() {
 
     // Set volume if specified
     match args.volume {
-        Some(vol) => {
-            Command::SetVolume(vol);
-        }
+        Some(vol) => match Command::SetVolume(vol).execute(&sa) {
+            Ok(_) => eprintln!("successfully set volume"),
+            Err(_) => eprintln!("error setting volume"),
+        },
         None => {}
     }
 }
