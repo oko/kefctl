@@ -46,7 +46,10 @@ async fn main() {
                 (pw, pr, sb, sr)
             }
             _ => {
-                error!("got invalid response type from GetSource command?");
+                error!(
+                    "got invalid response type from GetSource command: {:?}",
+                    res
+                );
                 return;
             }
         },
@@ -85,14 +88,14 @@ async fn main() {
     .execute(&sa)
     {
         Ok(_) => eprintln!("successfully set sources"),
-        Err(_) => eprintln!("error setting sources"),
+        Err(e) => eprintln!("error setting sources: {}", e),
     };
 
     // Set volume if specified
     match args.volume {
         Some(vol) => match Command::SetVolume(vol).execute(&sa) {
             Ok(_) => eprintln!("successfully set volume"),
-            Err(_) => eprintln!("error setting volume"),
+            Err(e) => eprintln!("error setting volume: {}", e),
         },
         None => {}
     }
